@@ -1,0 +1,4 @@
+openai
+gradio
+anthropic
+python-dotenv

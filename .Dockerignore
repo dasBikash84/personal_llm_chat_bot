@@ -1,0 +1,6 @@
+.env.example
+.git
+.gitignore
+personal_chat_bot.ipynb
+README.md
+run.sh
