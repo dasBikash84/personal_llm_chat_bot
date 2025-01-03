@@ -59,6 +59,8 @@ if anthropic_api_key and is_not_blank(anthropic_api_key):
     # add more Anthropic models if required
 if openai_api_key and is_not_blank(openai_api_key):
     model_options.append("gpt-4o")
+    model_options.append("o1-preview")
+    model_options.append("o1-mini")
     model_options.append("gpt-3.5-turbo")
     # add more OpenAI models if required
 if google_api_key and is_not_blank(google_api_key):
@@ -78,11 +80,13 @@ footer {display: none !important}
 def call_llm(history, selected_model: str,system_message):
     print(system_message)
     cleaned_history = []
-    if system_message and is_not_blank(system_message) and (not 'claude' in selected_model):
+    if system_message and is_not_blank(system_message) and (not 'claude' in selected_model) and (not 'o1' in selected_model):
         cleaned_history.append({"role": 'system', "content": system_message})
+    if system_message and is_not_blank(system_message) and ('o1' in selected_model):
+        cleaned_history.append({"role": 'user', "content": system_message})
     for msg in history:
         cleaned_history.append({"role": msg["role"], "content": msg["content"]})
-    if 'gpt' in selected_model:
+    if 'gpt' in selected_model or 'o1' in selected_model:
         return openai_stream_chat(selected_model, history=cleaned_history)
     elif 'claude' in selected_model:
         return claude_stream_chat(selected_model, history=cleaned_history,system_message=system_message)
