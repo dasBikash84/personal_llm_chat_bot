@@ -53,7 +53,20 @@ import re
 def is_not_blank(string):
     return bool(re.search(r'\S', string))
 
-model_choices = ["claude-3-sonnet-20240229", "gpt-4o-mini","gpt-4o", "gpt-3.5-turbo","gemini-1.5-flash"]
+model_options = []
+if anthropic_api_key and is_not_blank(anthropic_api_key):
+    model_options.append("claude-3-5-sonnet-20240620")
+    # add more Anthropic models if required
+if openai_api_key and is_not_blank(openai_api_key):
+    model_options.append("gpt-4o")
+    model_options.append("gpt-3.5-turbo")
+    # add more OpenAI models if required
+if google_api_key and is_not_blank(google_api_key):
+    model_options.append("gemini-1.5-flash")
+    # add more Gemini models if required
+
+if len(model_options) == 0:
+  raise ValueError('Need at least one model to run')
 css = """
 .custom-row {
     display: flex;
@@ -77,13 +90,13 @@ def call_llm(history, selected_model: str,system_message):
         return gemini_stream_chat(selected_model, history=cleaned_history)
 
 with gr.Blocks(css=css,title= 'LLM chatbots') as ui:
-    selected_model = gr.State(value=model_choices[0])  # Use gr.State to store the current model
+    selected_model = gr.State(value=model_options[0])  # Use gr.State to store the current model
 
     dropdown = gr.Dropdown(
         label="Choose a model",
-        choices=model_choices,
+        choices=model_options,
         interactive=True,
-        value=model_choices[0]
+        value=model_options[0]
     )
     
     system_message = gr.Textbox(label="System message:")
